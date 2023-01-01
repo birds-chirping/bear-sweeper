@@ -1,0 +1,37 @@
+:root {
+    --grid-size: 8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.board-wrapper {
+    height: 80vmin;
+    width: 80vmin;
+    display: grid;
+    grid-template-columns: repeat(var(--grid-size), 1fr);
+    grid-template-rows: repeat(var(--grid-size), 1fr);
+}
+
+.square {
+    border-top: 0.5vmin solid #ececec;
+    border-left: 0.5vmin solid #ececec;
+    border-bottom: 0.5vmin solid gray;
+    border-right: 0.5vmin solid gray;
+    background-color: lightgray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.square:hover {
+    background-color: rgb(221, 233, 232);
+    background-color: rgb(207, 223, 220);
+}
+
+.square[data-value='bear'] {
+    background-color: pink;
+}
