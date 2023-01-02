@@ -1,5 +1,6 @@
 :root {
     --grid-size: 8;
+    --display: none;
 }
 
 * {
@@ -14,7 +15,21 @@
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
+    position: relative;
 }
+
+.game-over-screen {
+    position: absolute;
+    background-color: rgba(255, 192, 203, 0.308);
+    height: 80vmin;
+    width: 80vmin;
+    top: 0;
+    display: var(--display);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 
 .square {
     border-top: 0.5vmin solid #ececec;
@@ -30,6 +45,7 @@
 .square:hover {
     background-color: rgb(221, 233, 232);
     background-color: rgb(207, 223, 220);
+    cursor: default;
 }
 
 .square[data-value='bear'] {

@@ -1,5 +1,9 @@
+
+//  ---------------------- S Q U A R E ----------------------------------------
+
 class Square {
-    constructor(id, row, col) {
+    constructor(parent, id, row, col) {
+        this.parent = parent;
         this.id = id;
         this.row = row;
         this.col = col;
@@ -7,6 +11,7 @@ class Square {
         this.div = document.createElement('div');
         this.status = 'hidden';
         this.addAttributes();
+        this.clickHandler = this.clicked.bind(this);
         this.onClick();
     }
 
@@ -14,60 +19,79 @@ class Square {
         this.div.setAttribute('class','square');
         this.div.setAttribute('id', `${this.id}`);
     }
+    
+    onClick() {
+        this.div.addEventListener('click', this.clickHandler);
+    };
 
-    updateValue() {
-        if (this.value != 'bear') {
-            ++this.value;
+    clicked() {
+        // console.log(this.parent);
+        if (this.status === 'visible') {
+            this.status = 'inactive';
+            // if value, show neighbours
+            // 
+            // 
+            this.div.removeEventListener('click', this.clickHandler);
+            
+        } else if (this.status === 'inactive') {        // to be removed
+            console.log('now inactive');                // to test removeEventListener; to be removed.
+       
+        } else if (this.value === 'bear') {
+            // game over
+            this.parent.gameOver();
+
+        } else if (this.value !== 0) {
+            this.showSquare();
+            this.status = 'visible';
+
+        } else {
+            // console.log(this.status);
+            // flood fill algorithm
+            // 
+            // 
+            
         }
     }
 
+
+
+    showSquare() {
+        this.div.textContent = this.value;
+        this.div.style.color = 'blue';                  // to be removed
+        this.div.style.backgroundColor = 'salmon';      // to be removed
+    }
+
+    showBear() {
+        this.div.textContent = 'x';
+        this.div.style.color = 'salmon';                  // to be removed
+        this.div.style.backgroundColor = 'white';      // to be removed
+    }
+
+
+    // rightclick -> flag
+    // 
+    //
+      
     placeBear() {
         this.div.setAttribute('data-value', 'bear');
         this.value = 'bear';
     }
 
-    
-    onClick() {
-        this.div.addEventListener('click', () => {
-            
-            if (this.status === 'visible') {
-                // if value, show neighbours
-                // 
-                // 
-                this.status = 'inactive';
-
-            } else if (this.status === 'inactive') {
-                return;
-
-            } else if (this.value === 'bear') {
-                this.showSquare();
-                // game over
-                // 
-                // 
-
-            } else if (this.value !== 0) {
-                this.showSquare();
-                this.status = 'visible';
-
-            } else {
-                console.log(this.status);
-                // flood fill algorithm
-                // 
-                // 
-            }
-    })};
-
-    showSquare() {
-        this.div.textContent = this.value;
+    updateValue() {
+        if (this.value != 'bear') {
+            ++this.value;
+            this.div.textContent = this.value;          // to be removed
+        }
     }
-
-    // rightclick -> flag
 }
 
+
+// --------------------------------- B O A R D -------------------------------
 
 class Board {
     squares = [];
     ids = [];
+    bearSquares = [];
     
     constructor(size=10, bearCount=20) {
         this.size = size;
@@ -96,7 +120,7 @@ class Board {
         for (let row = 0; row < this.size; row++) {
             let squareRow = [];
             for (let col = 0; col < this.size; col++) {
-                let square = new Square(id, row, col);
+                let square = new Square(this, id, row, col);
                 this.ids.push(id++);
                 squareRow.push(square);
                 boardContainer.appendChild(square.div);
@@ -107,8 +131,8 @@ class Board {
 
     addBears(bearCount) {
         let randomSquareIDs = this.pickRandomSquares(bearCount, this.ids);
-        let bearSquares = this.placeBears(randomSquareIDs, bearCount);
-        this.markAroundBearSquares(bearSquares, bearCount);
+        this.bearSquares = this.placeBears(randomSquareIDs, bearCount);
+        this.markAroundBearSquares(this.bearSquares, bearCount);
     }
 
     pickRandomSquares(count, ids) {
@@ -158,6 +182,18 @@ class Board {
                 }
             }
          }
+    }
+
+
+    gameOver() {
+        this.showAllBears();
+        document.querySelector(':root').style.setProperty('--display', 'flex');
+    }
+
+    showAllBears() {
+        for (let bear of this.bearSquares) {
+            bear.showBear();
+        }
     }
 }
 
