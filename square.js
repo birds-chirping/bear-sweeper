@@ -29,30 +29,21 @@ export default class Square {
     };
 
     clicked() {
-        // console.log(this.parent);
         if (this.status === 'visible') {
             this.status = 'inactive';
+            this.div.removeEventListener('click', this.clickHandler);
             // if value, show neighbours if
             // neighbours are only digits/digits & spaces (floodfill)
             // 
             // 
-            this.div.removeEventListener('click', this.clickHandler);
-            
-        } else if (this.status === 'inactive') {        // to be removed
-            console.log('now inactive');                // to test removeEventListener; to be removed.
-       
         } else if (this.value === 'bear') {
-            this.parent.gameOver();             // Game over
-
+            this.parent.gameOver();
         } else if (this.value) {
             this.showSquare();
-
         } else {
             this.parent.clearArea(this.row, this.col);
         }
     }
-
-
 
     showSquare() {
         this.status = 'visible';
@@ -75,7 +66,6 @@ export default class Square {
     updateValue() {
         if (this.value != 'bear') {
             ++this.value;
-            this.div.textContent = this.value;          // to be removed
         }
     }
 }

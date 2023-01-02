@@ -85,18 +85,27 @@ export default class Board {
         for(let i = 0; i < bearCount; i++) {
             let row = bearSquares[i].row;
             let col = bearSquares[i].col;
+            this.onNeighbours(row, col, 'update');
+         }
+    }
 
-            // get neighbours and action. - separate func
-            for (let r = row-1; r <= row+1; r++) {
-                for(let c = col-1; c <= col+1; c++){
-                    try {
-                        this.squares[r][c].updateValue();
-                    } catch {
-                        continue;
+    onNeighbours(row, col, action) {
+        for (let r = row-1; r <= row+1; r++) {
+            for(let c = col-1; c <= col+1; c++) {
+                try {
+                    switch(true) {
+                        case (action ===  'update'):
+                            this.squares[r][c].updateValue();
+                            break;
+                        case (action === 'show' && this.squares[r][c].value > 0):
+                            this.squares[r][c].textContent = this.squares[r][c].value;
+                            this.squares[r][c].showSquare();
                     }
+                } catch {
+                    continue;
                 }
             }
-         }
+        }
     }
 
     // Flood fill algorithm
@@ -104,18 +113,16 @@ export default class Board {
         if (this.squares[row][col].value || this.squares[row][col].status !== 'hidden') {
             return;
         }
-
         this.squares[row][col].showSquare();
-
         let neighbours = [
             [row-1, col],
             [row+1, col],
             [row, col+1],
             [row, col-1]
         ];
-        
         for (let n of neighbours) {
             try {
+                this.onNeighbours(row, col, 'show');
                 this.clearArea(n[0], n[1]);
             } catch {
                 continue;
@@ -138,7 +145,6 @@ export default class Board {
     newGame() {
         document.querySelector(':root').style.setProperty('--display', 'none');
         new Board();
-
     }
 }
 
