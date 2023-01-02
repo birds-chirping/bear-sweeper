@@ -11,7 +11,7 @@ export default class Square {
         this.id = id;
         this.row = row;
         this.col = col;
-        this.value = 0;
+        this.value = null;
         this.div = document.createElement('div');
         this.status = 'hidden';
         this.addAttributes();
@@ -42,25 +42,20 @@ export default class Square {
             console.log('now inactive');                // to test removeEventListener; to be removed.
        
         } else if (this.value === 'bear') {
-            // game over
-            this.parent.gameOver();
+            this.parent.gameOver();             // Game over
 
-        } else if (this.value !== 0) {
+        } else if (this.value) {
             this.showSquare();
-            this.status = 'visible';
 
         } else {
-            // console.log(this.status);
-            // flood fill algorithm
-            this.parent.clearArea(this);
-            // 
-            
+            this.parent.clearArea(this.row, this.col);
         }
     }
 
 
 
     showSquare() {
+        this.status = 'visible';
         this.div.textContent = this.value;
         this.div.style.color = 'blue';                  // to be removed
         this.div.style.backgroundColor = 'salmon';      // to be removed
@@ -72,11 +67,6 @@ export default class Square {
         this.div.style.backgroundColor = 'white';      // to be removed
     }
 
-
-    // rightclick -> flag
-    // 
-    //
-      
     placeBear() {
         this.div.setAttribute('data-value', 'bear');
         this.value = 'bear';
@@ -90,3 +80,7 @@ export default class Square {
     }
 }
 
+
+    // rightclick -> flag
+    // 
+    //

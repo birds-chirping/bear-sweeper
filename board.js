@@ -7,7 +7,7 @@ export default class Board {
     ids = [];
     bearSquares = [];
     
-    constructor(size=10, bearCount=20) {
+    constructor(size=16, bearCount=40) {
         this.size = size;
         this.bearCount = bearCount;
         this.createGrid();
@@ -86,6 +86,7 @@ export default class Board {
             let row = bearSquares[i].row;
             let col = bearSquares[i].col;
 
+            // get neighbours and action. - separate func
             for (let r = row-1; r <= row+1; r++) {
                 for(let c = col-1; c <= col+1; c++){
                     try {
@@ -98,9 +99,28 @@ export default class Board {
          }
     }
 
+    // Flood fill algorithm
+    clearArea(row, col) {
+        if (this.squares[row][col].value || this.squares[row][col].status !== 'hidden') {
+            return;
+        }
 
-    clearArea(square) {
-        console.log(square);
+        this.squares[row][col].showSquare();
+
+        let neighbours = [
+            [row-1, col],
+            [row+1, col],
+            [row, col+1],
+            [row, col-1]
+        ];
+        
+        for (let n of neighbours) {
+            try {
+                this.clearArea(n[0], n[1]);
+            } catch {
+                continue;
+            }
+        }
     }
 
     gameOver() {
@@ -109,17 +129,16 @@ export default class Board {
         document.querySelector('.new-game-btn').addEventListener('click', this.newGame.bind(this));
     }
 
+    showAllBears() {
+        for (let bear of this.bearSquares) {
+            bear.showBear();
+        }
+    }
 
     newGame() {
         document.querySelector(':root').style.setProperty('--display', 'none');
         new Board();
 
-    }
-
-    showAllBears() {
-        for (let bear of this.bearSquares) {
-            bear.showBear();
-        }
     }
 }
 
