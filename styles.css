@@ -1,6 +1,35 @@
 :root {
     --grid-size: 8;
     --display: none;
+    --border-size: 0.67vmin;
+    --title-color: #226940;
+    --a-link-color: #b0c7b0;
+    --a-hover-color: #b0c7b0;
+}
+
+@font-face {
+    font-family: 'pixel';
+    src: url('./fonts/pixel_intv-webfont.woff2') format('woff2'),
+         url('./fonts/pixel_intv-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'a_little_sunshineregular';
+    src: url('./fonts/a_little_sunshine-webfont.woff2') format('woff2'),
+         url('./fonts/a_little_sunshine-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+html { 
+    background: url(./img/bg.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 * {
@@ -9,18 +38,48 @@
     padding: 0;
 }
 
+a:link, a:visited {
+    color: var(--a-link-color);
+    text-decoration: none;
+    font-family: 'a_little_sunshineregular', serif;
+}
+
+a:hover {
+    color: var(--a-hover-color);
+    font-weight: 600;
+}
+
+body {
+    /* height: 100vh; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.title {
+    font-family: 'a_little_sunshineregular', serif;
+    font-size: 8vmin;
+    color: var(--title-color);
+    font-weight: 100;
+    margin: 1vmin 0;
+}
+
 .board-wrapper {
+    margin: 1vmin 0;
     height: 80vmin;
     width: 80vmin;
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
     position: relative;
+    border: 0.5vmin solid var(--title-color);
+    background-color: var(--title-color);
 }
 
 .game-over-screen {
     position: absolute;
-    background-color: rgba(255, 192, 203, 0.308);
+    /* background-color: rgba(255, 192, 203, 0.308); */
     height: 80vmin;
     width: 80vmin;
     top: 0;
@@ -30,16 +89,19 @@
     flex-direction: column;
 }
 
-
 .square {
-    border-top: 0.5vmin solid #ececec;
-    border-left: 0.5vmin solid #ececec;
-    border-bottom: 0.5vmin solid gray;
-    border-right: 0.5vmin solid gray;
+    border-top: var(--border-size) solid #ececec;
+    border-left: var(--border-size) solid #ececec;
+    border-bottom: var(--border-size) solid #777777;
+    border-right: var(--border-size) solid #777777;
     background-color: lightgray;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: 'pixel', sans-serif;
+    font-size: 5vmin;
+    line-height: 3vmin;
+    padding: 0 0 0.8vmin 0.4vmin;
 }
 
 .square:hover {
@@ -48,6 +110,24 @@
     cursor: default;
 }
 
-.square[data-value='bear'] {
-    background-color: pink;
+footer {
+    margin-top: 2vmin;
+    font-family: 'a_little_sunshineregular', serif;
+    font-size: 3vmin;
+    background-color: #000000ab;
+    width: 100%;
+}
+
+.footer-wrapper {
+    width: 80vmin;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: white;
+    margin: auto;
+    padding: 0.5vmin 2vmin;
+}
+
+.github-icon {
+    max-height: 2.5vmin;
 }

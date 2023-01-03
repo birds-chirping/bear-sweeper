@@ -2,10 +2,7 @@
 
 
 export default class Square {
-    getName() {
-        return 'Square';
-    }
-
+    color_palette = ['blue', 'green', 'red', 'purple', 'maroon', 'turquoise','black', 'gray']
     constructor(parent, id, row, col) {
         this.parent = parent;
         this.id = id;
@@ -48,8 +45,10 @@ export default class Square {
     showSquare() {
         this.status = 'visible';
         this.div.textContent = this.value;
-        this.div.style.color = 'blue';                  // to be removed
-        this.div.style.backgroundColor = 'salmon';      // to be removed
+        this.div.style.setProperty('border', 'none'); 
+        this.div.style.setProperty('border-top', '0.5vmin solid #777777'); 
+        this.div.style.setProperty('border-left', '0.5vmin solid #777777');
+
     }
 
     showBear() {
@@ -66,6 +65,8 @@ export default class Square {
     updateValue() {
         if (this.value != 'bear') {
             ++this.value;
+            this.div.style.setProperty('color', this.color_palette[this.value-1]);
+            console.log(this.div);
         }
     }
 }

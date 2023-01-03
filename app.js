@@ -2,7 +2,7 @@ import Board from "./board.js";
 
 
 function play() {
-    new Board();
+    new Board(16, 40);
 }
 
 play();
