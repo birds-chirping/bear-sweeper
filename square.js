@@ -49,7 +49,6 @@ export default class Square {
         this.div.style.setProperty('border', 'none'); 
         this.div.style.setProperty('border-top', '0.5vmin solid #777777'); 
         this.div.style.setProperty('border-left', '0.5vmin solid #777777');
-
     }
 
     showBear() {
