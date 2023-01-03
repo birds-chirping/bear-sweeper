@@ -1,12 +1,15 @@
 :root {
     --grid-size: 8;
     --display: none;
-    --border-size: 0.67vmin;
+    --border-size: calc(0.67vmin * 16 / var(--grid-size));
     --board-border-color: #000000ab;
     --title-color: #226940;
     --title-color: #0b3f2bd9;
     --a-link-color: #b0c7b0;
     --a-hover-color: #b0c7b0;
+    --font-size-num: calc(4.5vmin * 16 / var(--grid-size));
+    --line-height-num: calc(2vmin * 16 / var(--grid-size));
+    --square-border: calc(0.5vmin * 16 / var(--grid-size));
 }
 
 @font-face {
@@ -81,7 +84,6 @@ main {
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
-    border: 0.2vmin solid var(--board-border-color);
     background-color: var(--board-border-color);
     box-shadow: 0.2vmin 0.2vmin 0.5vmin var(--board-border-color);
 }
@@ -142,9 +144,9 @@ button:hover {
     justify-content: center;
     align-items: center;
     font-family: 'pixel', sans-serif;
-    font-size: 5vmin;
-    line-height: 3vmin;
-    padding: 0 0 0.8vmin 0.4vmin;
+    font-size: var(--font-size-num);
+    line-height: var(--line-height-num);
+    padding: 0 0 0.8% 0.4%;
 
 }
 
@@ -163,7 +165,6 @@ footer {
 }
 
 .footer-wrapper {
-    /* width: 80vmin; */
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
@@ -192,13 +193,13 @@ footer {
     background-size: 95%;
     background-repeat: no-repeat;
     border: none; 
-    border-top: 0.5vmin solid #777777; 
-    border-left: 0.5vmin solid #777777;
+    border-top: var(--square-border) solid #777777; 
+    border-left: var(--square-border) solid #777777;
 }
 
 .visible-square {
     background-image: none;
     border: none;
-    border-top: 0.5vmin solid #777777; 
-    border-left: 0.5vmin solid #777777;
+    border-top: var(--square-border) solid #777777; 
+    border-left: var(--square-border) solid #777777;
 }
