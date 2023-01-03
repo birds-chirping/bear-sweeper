@@ -68,14 +68,18 @@ body {
     margin: 1vmin 0;
 }
 
+
+main {
+    position: relative;
+}
+
+
 .board-wrapper {
-    margin: 1vmin 0;
     height: 80vmin;
     width: 80vmin;
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
-    position: relative;
     border: 0.2vmin solid var(--board-border-color);
     background-color: var(--board-border-color);
     box-shadow: 0.2vmin 0.2vmin 0.5vmin var(--board-border-color);
@@ -86,9 +90,11 @@ body {
     width: 80vmin;
     position: absolute;
     top: 0;
+    left: 0;
     display: var(--display);
     align-items: center;
     font-family: 'a_little_sunshineregular', serif;
+    background-color: rgba(0, 0, 0, 0.100);
 }
 
 .game-over-wrapper {
@@ -97,7 +103,6 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 2vmin;
-
     background: linear-gradient(to bottom,  rgba(6, 22, 15, 0.920),
                                             rgba(11, 63, 43, 0.920),
                                             rgba(11, 63, 43, 0.850),
@@ -139,10 +144,6 @@ button:hover {
     line-height: 3vmin;
     padding: 0 0 0.8vmin 0.4vmin;
 
-    /* background-image: url(./img/bear-pawprint.png);
-    background-position: 50% 60%;
-    background-size: 90%;
-    background-repeat: no-repeat; */
 }
 
 .square:hover {
@@ -171,4 +172,31 @@ footer {
 
 .github-icon {
     max-height: 2.5vmin;
+}
+
+
+
+.flagged {
+    background-image: url(./img/bear-pawprint.png);
+    background-position: 50% 60%;
+    background-size: 90%;
+    background-repeat: no-repeat;
+}
+
+.show-bear {
+    background-color: #b0c7b0;
+    background-image: url(./img/bear.png);
+    background-position: center;
+    background-size: 95%;
+    background-repeat: no-repeat;
+    border: none; 
+    border-top: 0.5vmin solid #777777; 
+    border-left: 0.5vmin solid #777777;
+}
+
+.visible-square {
+    background-image: none;
+    border: none;
+    border-top: 0.5vmin solid #777777; 
+    border-left: 0.5vmin solid #777777;
 }

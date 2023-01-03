@@ -1,8 +1,9 @@
 import Board from "./board.js";
 
 
-function play() {
-    new Board(16, 40);
+export function play() {
+    let board = null;
+    board = new Board(16, 40);
 }
 
 play();

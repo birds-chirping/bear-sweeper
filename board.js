@@ -1,4 +1,5 @@
 import Square from "./square.js";
+import { play } from "./app.js";
 
 // --------------------------------- B O A R D -------------------------------
 export default class Board {
@@ -6,6 +7,7 @@ export default class Board {
     squares = [];
     ids = [];
     bearSquares = [];
+    flaggedSquares = []
     
     constructor(size=16, bearCount=40) {
         this.size = size;
@@ -111,9 +113,12 @@ export default class Board {
     // Flood fill algorithm
     clearArea(row, col) {
         if (this.squares[row][col].value || this.squares[row][col].status !== 'hidden') {
+            this.squares[row][col].flagged = 'no';
             return;
         }
+
         this.squares[row][col].showSquare();
+
         let neighbours = [
             [row-1, col],
             [row+1, col],
@@ -132,6 +137,7 @@ export default class Board {
 
     gameOver() {
         this.showAllBears();
+        this.showWrongFlags();
         document.querySelector(':root').style.setProperty('--display', 'flex');
         document.querySelector('.new-game-btn').addEventListener('click', this.newGame.bind(this));
     }
@@ -142,9 +148,34 @@ export default class Board {
         }
     }
 
+    showWrongFlags() {
+        for (let square of this.flaggedSquares) {
+            square.showWrongFlag();
+        }
+    }
+
+    checkFlags() {
+        let i = 0;
+        while (this.flaggedSquares.length > 0 && i < this.flaggedSquares.length) {
+            if (this.flaggedSquares[i].flagged == 'no') {
+                this.removeFlaggedSquare(this.flaggedSquares[i]);
+                i--;
+            }
+            i++;
+        }
+    }
+
     newGame() {
         document.querySelector(':root').style.setProperty('--display', 'none');
-        new Board();
+        play();
+    }
+
+    addFlaggedSquare(square) {
+        this.flaggedSquares.push(square);
+    }
+
+    removeFlaggedSquare(square) {
+        this.flaggedSquares.splice(this.flaggedSquares.indexOf(square), 1);
     }
 }
 
