@@ -3,7 +3,7 @@ import Board from "./board.js";
 
 export function play() {
     let board = null;
-    board = new Board(16, 40);
+    board = new Board(8, 10);
 }
 
 play();

@@ -103,12 +103,12 @@ main {
     margin: 0.3vmin;
 }
 
-.game-over-message {
+.message {
     display: var(--display);
     align-items: flex-end;
 }
 
-.game-over-message > h1 {
+.message > h1 {
     color: var(--title-color);
     font-size: 4vmin;
     line-height: 4vmin;

@@ -80,6 +80,7 @@ export default class Square {
             this.flagged= 'no';
             this.div.textContent = this.value;
             this.div.classList.add('visible-square');
+            this.parent.addClearedSquare(this.id);
     }
 
     showBear() {

@@ -8,6 +8,7 @@ export default class Board {
     ids = [];
     bearSquares = [];
     flaggedSquares = []
+    clearedSquares = new Set();
     
     constructor(size=16, bearCount=40) {
         this.size = size;
@@ -160,6 +161,7 @@ export default class Board {
     gameOver() {
         this.showAllBears();
         this.showWrongFlags();
+        document.querySelector('.game-message').textContent = 'Game over';
         document.querySelector(':root').style.setProperty('--display', 'flex');
     }
 
@@ -210,5 +212,20 @@ export default class Board {
         return this.adjacentSquares(square.row, square.col, 'getflags');
     }
 
+    // ----------------------- W I N -------------------------//
+    
+    addClearedSquare(id) {
+        this.clearedSquares.add(id);
+        this.checkWin();
+    }
+
+    checkWin() {
+        if (this.clearedSquares.size == this.size ** 2 - this.bearCount) {
+            document.querySelector('.game-message').textContent = 'You win!';
+            document.querySelector(':root').style.setProperty('--display', 'flex');
+        } else {
+            console.log(this.clearedSquares.size, this.clearedSquares);
+        }
+    }
 }
 
