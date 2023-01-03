@@ -36,12 +36,10 @@ export default class Square {
 
     clicked() {
         if (this.status === 'visible') {
-            this.status = 'inactive';
-            this.div.removeEventListener('click', this.clickHandler);
-            // CHORDING - uncover all adjacent squares if 
-            // value == number of adjacent paws.
-            // 
-            // 
+            if (this.parent.chord(this)) {
+                this.status = 'inactive';
+                this.div.removeEventListener('click', this.clickHandler);
+            }
         } else if (this.value === 'bear') {
             this.parent.gameOver();
             this.div.style.backgroundColor = '#dfb1b3';
@@ -60,6 +58,8 @@ export default class Square {
     }
 
     // -------------------------------------------------------------------//
+
+
 
     toggleFlagged () {
         if (this.flagged === 'no') {

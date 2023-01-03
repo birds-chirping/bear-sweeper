@@ -93,6 +93,7 @@ export default class Board {
     }
 
     adjacentSquares(row, col, action) {
+        let count = 0;
         for (let r = row-1; r <= row+1; r++) {
             for(let c = col-1; c <= col+1; c++) {
                 try {
@@ -103,12 +104,21 @@ export default class Board {
                         case (action === 'show' && this.squares[r][c].value > 0):
                             this.squares[r][c].textContent = this.squares[r][c].value;
                             this.squares[r][c].showSquare();
+                            break;
+                        case (action === 'getflags'):
+                            count += (this.squares[r][c].flagged == 'yes');
+                            break;
+                        case (action === 'chord'):
+                            if (this.squares[r][c].status !== 'visible' && this.squares[r][c].flagged === 'no') {
+                                this.squares[r][c].clicked();
+                            }
                     }
                 } catch {
                     continue;
                 }
             }
         }
+        return count;
     }
 
     // Flood fill algorithm
@@ -136,8 +146,7 @@ export default class Board {
         }
     }
 
-
-
+    // ------------ N E W   G A M E / G A M E   O V E R -------//
 
     addNewGameBtn() {
         document.querySelector('.new-game-btn').addEventListener('click', this.newGame.bind(this));
@@ -160,8 +169,8 @@ export default class Board {
         }
     }
 
+    // -------------------- F L A G S -----------------------//
 
-    
     addFlaggedSquare(square) {
         this.flaggedSquares.push(square);
     }
@@ -185,6 +194,20 @@ export default class Board {
             }
             i++;
         }
+    }
+
+
+    // -------------- C H O R D I N G ------------------------//
+
+    chord(square) {
+        if (this.getAdjacentFlags(square) == square.value) {
+            this.adjacentSquares(square.row, square.col, 'chord');
+            return true;
+        }
+    }
+
+    getAdjacentFlags(square) {
+        return this.adjacentSquares(square.row, square.col, 'getflags');
     }
 
 }
