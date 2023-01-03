@@ -44,7 +44,7 @@ export default class Square {
             // 
         } else if (this.value === 'bear') {
             this.parent.gameOver();
-            this.div.style.backgroundColor = 'pink';
+            this.div.style.backgroundColor = '#dfb1b3';
         } else if (this.value) {
             this.showSquare();
         } else {

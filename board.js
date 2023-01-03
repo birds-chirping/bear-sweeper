@@ -19,6 +19,7 @@ export default class Board {
         this.setRootSize();
         this.addSquares(this.setBoardContainer());
         this.addBears(this.bearCount);
+        this.addNewGameBtn();
     }
 
     setRootSize() {
@@ -87,11 +88,11 @@ export default class Board {
         for(let i = 0; i < bearCount; i++) {
             let row = bearSquares[i].row;
             let col = bearSquares[i].col;
-            this.onNeighbours(row, col, 'update');
+            this.adjacentSquares(row, col, 'update');
          }
     }
 
-    onNeighbours(row, col, action) {
+    adjacentSquares(row, col, action) {
         for (let r = row-1; r <= row+1; r++) {
             for(let c = col-1; c <= col+1; c++) {
                 try {
@@ -127,7 +128,7 @@ export default class Board {
         ];
         for (let n of neighbours) {
             try {
-                this.onNeighbours(row, col, 'show');
+                this.adjacentSquares(row, col, 'show');
                 this.clearArea(n[0], n[1]);
             } catch {
                 continue;
@@ -135,17 +136,38 @@ export default class Board {
         }
     }
 
+
+
+
+    addNewGameBtn() {
+        document.querySelector('.new-game-btn').addEventListener('click', this.newGame.bind(this));
+    }
+
+    newGame() {
+        document.querySelector(':root').style.setProperty('--display', 'none');
+        play();
+    }
+
     gameOver() {
         this.showAllBears();
         this.showWrongFlags();
         document.querySelector(':root').style.setProperty('--display', 'flex');
-        document.querySelector('.new-game-btn').addEventListener('click', this.newGame.bind(this));
     }
 
     showAllBears() {
         for (let bear of this.bearSquares) {
             bear.showBear();
         }
+    }
+
+
+    
+    addFlaggedSquare(square) {
+        this.flaggedSquares.push(square);
+    }
+
+    removeFlaggedSquare(square) {
+        this.flaggedSquares.splice(this.flaggedSquares.indexOf(square), 1);
     }
 
     showWrongFlags() {
@@ -165,17 +187,5 @@ export default class Board {
         }
     }
 
-    newGame() {
-        document.querySelector(':root').style.setProperty('--display', 'none');
-        play();
-    }
-
-    addFlaggedSquare(square) {
-        this.flaggedSquares.push(square);
-    }
-
-    removeFlaggedSquare(square) {
-        this.flaggedSquares.splice(this.flaggedSquares.indexOf(square), 1);
-    }
 }
 
