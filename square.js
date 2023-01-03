@@ -35,6 +35,7 @@ export default class Square {
             // 
         } else if (this.value === 'bear') {
             this.parent.gameOver();
+            this.div.style.backgroundColor = 'pink';
         } else if (this.value) {
             this.showSquare();
         } else {
@@ -52,9 +53,14 @@ export default class Square {
     }
 
     showBear() {
-        this.div.textContent = 'x';
-        this.div.style.color = 'salmon';                  // to be removed
-        this.div.style.backgroundColor = 'white';      // to be removed
+        this.div.style.backgroundColor = '#b0c7b0';
+        this.div.style.backgroundImage = 'url(./img/bear.png)';
+        this.div.style.backgroundPosition = 'center';
+        this.div.style.backgroundSize = '95%';
+        this.div.style.backgroundRepeat = 'no-repeat';
+        this.div.style.setProperty('border', 'none'); 
+        this.div.style.setProperty('border-top', '0.5vmin solid #777777'); 
+        this.div.style.setProperty('border-left', '0.5vmin solid #777777');
     }
 
     placeBear() {

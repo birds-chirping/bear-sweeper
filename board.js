@@ -140,6 +140,7 @@ export default class Board {
         for (let bear of this.bearSquares) {
             bear.showBear();
         }
+        // this.div.style.backgroundColor = '#b0c7b0';
     }
 
     newGame() {

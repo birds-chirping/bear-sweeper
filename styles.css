@@ -119,9 +119,9 @@ footer {
 }
 
 .footer-wrapper {
-    width: 80vmin;
+    /* width: 80vmin; */
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: flex-end;
     color: white;
     margin: auto;
