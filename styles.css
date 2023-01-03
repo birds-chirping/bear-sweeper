@@ -52,10 +52,11 @@ a:hover {
 }
 
 body {
-    /* height: 100vh; */
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 
@@ -137,6 +138,11 @@ button:hover {
     font-size: 5vmin;
     line-height: 3vmin;
     padding: 0 0 0.8vmin 0.4vmin;
+
+    /* background-image: url(./img/bear-pawprint.png);
+    background-position: 50% 60%;
+    background-size: 90%;
+    background-repeat: no-repeat; */
 }
 
 .square:hover {
