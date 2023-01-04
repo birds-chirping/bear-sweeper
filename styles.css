@@ -1,15 +1,17 @@
 :root {
+    --size: 1;
     --grid-size: 8;
+    --grid-width: calc(75vmin * var(--size));
     --display: none;
-    --border-size: calc(0.67vmin * 16 / var(--grid-size));
+    --border-size: calc(0.67vmin * 16  * var(--size) / var(--grid-size));
     --board-border-color: #000000ab;
     --title-color: #226940;
     --title-color: #0b3f2bd9;
     --a-link-color: #b0c7b0;
     --a-hover-color: #b0c7b0;
-    --font-size-num: calc(4.5vmin * 16 / var(--grid-size));
-    --line-height-num: calc(2vmin * 16 / var(--grid-size));
-    --square-border: calc(0.5vmin * 16 / var(--grid-size));
+    --font-size-num: calc(4.5vmin * 16 * var(--size) / var(--grid-size));
+    --line-height-num: calc(2vmin * 16 * var(--size) / var(--grid-size));
+    --square-border: calc(0.5vmin * 16 * var(--size) / var(--grid-size));
 }
 
 @font-face {
@@ -55,16 +57,14 @@ a:hover {
 }
 
 body {
-    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    font-family: 'a_little_sunshineregular';
+
 }
 
-
 .title {
-    font-family: 'a_little_sunshineregular', serif;
     font-size: 8vmin;
     color: var(--title-color);
     font-weight: 100;
@@ -72,25 +72,26 @@ body {
     text-align: center;
 }
 
-
 main {
     position: relative;
 }
 
 
 .board-wrapper {
-    height: 80vmin;
-    width: 80vmin;
+    height: var(--grid-width);
+    width: var(--grid-width);
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
     background-color: var(--board-border-color);
     box-shadow: 0.2vmin 0.2vmin 0.5vmin var(--board-border-color);
+    border-bottom: calc(var(--square-border) / 2) solid #777777; 
+    border-right: calc(var(--square-border) / 2) solid #777777;
 }
 
 .game-over-screen {
-    height: 80vmin;
-    width: 80vmin;
+    height: var(--grid-width);
+    width: var(--grid-width);
     position: absolute;
     top: 0;
     left: 0;
@@ -98,27 +99,42 @@ main {
 }
 
 .menu-wrapper {
-    width: 80vmin;
+    width: calc(var(--grid-width));
     display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
     gap: 2vmin;
-    font-family: 'a_little_sunshineregular', serif;
+    color: var(--title-color);
     margin: 0.3vmin;
 }
 
 .message {
-    display: var(--display);
-    align-items: flex-end;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .message > h1 {
-    color: var(--title-color);
+    display: var(--display);
     font-size: 4vmin;
-    line-height: 4vmin;
     font-weight: 100;
+    padding-right: 5%;
+}
+
+.paws {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-size: 4vmin;
+}
+
+.btn-wrap {
+    flex: 1;
 }
 
 button {
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0.288);
     font-family: 'a_little_sunshineregular', serif;
     width: fit-content;
     font-size: 4vmin;
@@ -146,7 +162,7 @@ button:hover {
     font-family: 'pixel', sans-serif;
     font-size: var(--font-size-num);
     line-height: var(--line-height-num);
-    padding: 0 0 0.8% 0.4%;
+    padding: 0 0 15% 8%;
 
 }
 
@@ -158,16 +174,16 @@ button:hover {
 
 footer {
     margin-top: 2vmin;
-    font-family: 'a_little_sunshineregular', serif;
     font-size: 3vmin;
-    background-color: #000000ab;
     width: 100%;
 }
 
 .footer-wrapper {
+    background-color: #000000ab;
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
+    flex-wrap: wrap;
     color: white;
     margin: auto;
     padding: 0.5vmin 2vmin;
@@ -176,8 +192,6 @@ footer {
 .github-icon {
     max-height: 2.5vmin;
 }
-
-
 
 .flagged {
     background-image: url(./img/bear-pawprint.png);
@@ -202,4 +216,35 @@ footer {
     border: none;
     border-top: var(--square-border) solid #777777; 
     border-left: var(--square-border) solid #777777;
+}
+
+@media screen and (orientation: portrait) {
+    :root {
+        --size: 1.2;
+    }
+
+    body {
+        height: 100vh;
+        justify-content: space-around;
+    }
+
+    .title {
+        font-size: 10vmin;
+    }
+
+    button, 
+    .paws,
+    .message > h1 {
+        font-size: 5.5vmin;
+    }
+
+    .footer-wrapper {
+        flex-direction: column;
+        align-items: center;
+        font-size: 4vmin;
+    }
+
+    .footer-wrapper :nth-child(2) {
+        order: -1;
+    }
 }

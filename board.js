@@ -21,6 +21,7 @@ export default class Board {
         this.addSquares(this.setBoardContainer());
         this.addBears(this.bearCount);
         this.addNewGameBtn();
+        this.updateFlagCounter();
     }
 
     setRootSize() {
@@ -175,10 +176,12 @@ export default class Board {
 
     addFlaggedSquare(square) {
         this.flaggedSquares.push(square);
+        this.updateFlagCounter();
     }
 
     removeFlaggedSquare(square) {
         this.flaggedSquares.splice(this.flaggedSquares.indexOf(square), 1);
+        this.updateFlagCounter();
     }
 
     showWrongFlags() {
@@ -198,7 +201,10 @@ export default class Board {
         }
     }
 
-
+    updateFlagCounter() {
+        document.querySelector('.paws').textContent = `Bears: ${this.bearCount - this.flaggedSquares.length}`;
+    }
+    
     // -------------- C H O R D I N G ------------------------//
 
     chord(square) {
@@ -213,7 +219,7 @@ export default class Board {
     }
 
     // ----------------------- W I N -------------------------//
-    
+
     addClearedSquare(id) {
         this.clearedSquares.add(id);
         this.checkWin();
