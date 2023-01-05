@@ -24,7 +24,20 @@ export default class Square {
         this.div.setAttribute('id', `${this.id}`);
     }
     
+    setAdjacentSquares() {
+        if (this.row > 0) this.n = this.parent.squares[this.row-1][this.col];
+        if (this.col > 0) this.w = this.parent.squares[this.row][this.col-1];
+        if (this.row < this.parent.size - 1) this.s = this.parent.squares[this.row+1][this.col];
+        if (this.col < this.parent.size - 1) this.e = this.parent.squares[this.row][this.col+1];
 
+        if (this.n && this.w) this.nw = this.parent.squares[this.row-1][this.col-1];
+        if (this.n && this.e) this.ne = this.parent.squares[this.row-1][this.col+1];
+        if (this.s && this.w) this.sw = this.parent.squares[this.row+1][this.col-1];
+        if (this.s && this.e) this.se = this.parent.squares[this.row+1][this.col+1];
+        // console.log(this.id, this.n, this.s, this.w, this.e, this.nw, this.ne, this.sw, this.se);
+    }
+
+    
     // ------------------- M O U S E    E V E N T S --------------------//
     onClick() {
         this.div.addEventListener('click', this.clickHandler);
@@ -38,6 +51,7 @@ export default class Square {
         if (this.status === 'visible') {
             if (this.parent.chord(this)) {
                 this.status = 'inactive';
+                this.div.setAttribute('inactive', 'yes');
                 this.div.removeEventListener('click', this.clickHandler);
             }
         } else if (this.value === 'bear') {
@@ -46,14 +60,16 @@ export default class Square {
         } else if (this.value) {
             this.showSquare();
         } else {
-            this.parent.clearArea(this.row, this.col);
+            this.parent.clearArea(this);
             this.parent.checkFlags();
         }
     }
 
     rightClicked(evt) {
             evt.preventDefault();
-            this.toggleFlagged();
+            if (this.status === 'hidden'){
+                this.toggleFlagged();
+            }
 
     }
 
@@ -77,7 +93,9 @@ export default class Square {
 
     showSquare() {
             this.status = 'visible';
-            this.flagged= 'no';
+            this.flagged = 'no';
+            this.onClick();
+
             this.div.textContent = this.value;
             this.div.classList.add('visible-square');
             this.parent.addClearedSquare(this.id);

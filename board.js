@@ -17,14 +17,24 @@ export default class Board {
     }
 
     createGrid() {
-        this.setRootSize();
+        this.setRootVariables();
         this.addSquares(this.setBoardContainer());
-        this.addBears(this.bearCount);
+        this.linkAdjacentSquares();
+        this.addBears();
         this.addNewGameBtn();
         this.updateFlagCounter();
     }
 
-    setRootSize() {
+    linkAdjacentSquares() {
+        this.squares.forEach(row => {
+            row.forEach(square => square.setAdjacentSquares());
+         })
+    }
+
+
+    // ----------------- S E T    B O A R D ----------------------//
+    setRootVariables() {
+        document.querySelector(':root').style.setProperty('--display', 'none');
         document.querySelector(':root').style.setProperty('--grid-size', `${this.size}`);
     }
 
@@ -33,6 +43,8 @@ export default class Board {
         board.textContent = '';
         return board;
     }
+
+    // ----------------- add squares and bears ----------------------//
 
     addSquares(boardContainer) {
         let id = 0;
@@ -43,20 +55,44 @@ export default class Board {
                 this.ids.push(id++);
                 squareRow.push(square);
                 boardContainer.appendChild(square.div);
+                console.log('A SQUARE');
             }
             this.squares.push(squareRow);
         } 
     }
 
-    addBears(bearCount) {
-        let randomSquareIDs = this.pickRandomSquares(bearCount, this.ids);
-        this.bearSquares = this.placeBears(randomSquareIDs, bearCount);
-        this.markAroundBearSquares(this.bearSquares, bearCount);
+
+    // --------------- generate bears ----------------------------------------
+    addBears() {
+        this.placeBears(this.pickRandomIDs(this.ids));
+        this.markAroundBearSquares();
+    }
+    
+    placeBears(randomIDsList) {
+        for (let i = 0; i < this.bearCount; i++) {
+            let square = this.idToSquare(randomIDsList[i]);
+            square.placeBear();
+            this.bearSquares.push(square);
+        }
     }
 
-    pickRandomSquares(count, ids) {
+    markAroundBearSquares() {
+        for(let i = 0; i < this.bearCount; i++) {
+            let row = this.bearSquares[i].row;
+            let col = this.bearSquares[i].col;
+            this.adjacentSquares(row, col, 'update');
+         }
+    }
+
+    //  ------------ helpers--------
+
+    pickRandomIDs(ids) {
         let idlist = ids.map((x) => x);
-        return this.shuffle(idlist).splice(1, count);
+        return this.shuffle(idlist).splice(1, this.bearCount);
+    }
+
+    idToSquare(id) {
+        return this.squares[Math.floor((id)/this.size)][id%this.size];
     }
     
     // Fisher–Yates shuffle
@@ -72,79 +108,87 @@ export default class Board {
         return list;
     }
     
-    placeBears(randomIDsList, bearCount) {
-        let bearSquares = [];
-        for (let i = 0; i < bearCount; i++) {
-            let square = this.idToSquare(randomIDsList[i]);
-            square.placeBear();
-            bearSquares.push(square);
-        }
-        return bearSquares;
-    }
 
-    idToSquare(id) {
-        return this.squares[Math.floor((id)/this.size)][id%this.size];
-    }
-    
-    markAroundBearSquares(bearSquares, bearCount) {
-        for(let i = 0; i < bearCount; i++) {
-            let row = bearSquares[i].row;
-            let col = bearSquares[i].col;
-            this.adjacentSquares(row, col, 'update');
-         }
-    }
+    // ---------------------------------------------------------------------
 
     adjacentSquares(row, col, action) {
         let count = 0;
         for (let r = row-1; r <= row+1; r++) {
             for(let c = col-1; c <= col+1; c++) {
-                try {
+                if (r < 0 || r > this.size - 1 || c < 0 || c > this.size - 1 || r == row && c == col) {
+                    // console.log('sq:', row, col, 'n:', r, c);
+                    continue;
+                } else {
                     switch(true) {
                         case (action ===  'update'):
                             this.squares[r][c].updateValue();
-                            break;
-                        case (action === 'show' && this.squares[r][c].value > 0):
-                            this.squares[r][c].textContent = this.squares[r][c].value;
-                            this.squares[r][c].showSquare();
                             break;
                         case (action === 'getflags'):
                             count += (this.squares[r][c].flagged == 'yes');
                             break;
                         case (action === 'chord'):
-                            if (this.squares[r][c].status !== 'visible' && this.squares[r][c].flagged === 'no') {
-                                this.squares[r][c].clicked();
+                            if (this.squares[r][c].status === 'hidden' && this.squares[r][c].flagged === 'no') {
+                                if (this.squares[r][c].value === 'bear') {
+                                    this.squares[r][c].div.style.backgroundColor = '#dfb1b3';
+                                    this.gameOver();
+                                } else if (this.squares[r][c].value == null) {
+                                    this.clearArea(this.squares[r][c]);
+                                } else {
+                                    this.squares[r][c].showSquare();
+                                }
                             }
                     }
-                } catch {
-                    continue;
                 }
             }
         }
         return count;
     }
 
-    // Flood fill algorithm
-    clearArea(row, col) {
-        if (this.squares[row][col].value || this.squares[row][col].status !== 'hidden') {
-            this.squares[row][col].flagged = 'no';
+    clearArea(square) {
+        // already visible:
+        if (square.status !== 'hidden') {
             return;
         }
 
-        this.squares[row][col].showSquare();
+        // Hidden numbers: 
+        if (square.value) {
+            square.showSquare();
+            return;
+        }
 
-        let neighbours = [
-            [row-1, col],
-            [row+1, col],
-            [row, col+1],
-            [row, col-1]
-        ];
-        for (let n of neighbours) {
-            try {
-                this.adjacentSquares(row, col, 'show');
-                this.clearArea(n[0], n[1]);
-            } catch {
-                continue;
-            }
+        // Empty squares:
+        square.showSquare();
+
+        if (square.n) {
+            this.clearArea(square.n);
+            if (square.n.value) this.checkCorners(square);
+        }
+        if (square.e) {
+            this.clearArea(square.e);
+            if (square.e.value) this.checkCorners(square);
+        }
+        if (square.s) {
+            this.clearArea(square.s);
+            if (square.s.value) this.checkCorners(square);
+        }
+        if (square.w) {
+            this.clearArea(square.w);
+            if (square.w.value) this.checkCorners(square);
+        }
+    }
+
+    checkCorners(square) {
+        if (square.nw && square.n.value && square.w.value) {
+            square.nw.value ? square.nw.showSquare() : this.clearArea(square.nw);
+        } 
+        if (square.ne && square.n.value && square.e.value) {
+            square.ne.value ? square.ne.showSquare() : this.clearArea(square.ne);
+        }
+        if (square.sw && square.s.value && square.w.value) {
+            square.sw.value ? square.sw.showSquare() : this.clearArea(square.sw);
+        }
+        if (square.se && square.s.value && square.e.value) {
+            square.se.value ? square.se.showSquare() : this.clearArea(square.se);
         }
     }
 
@@ -155,7 +199,7 @@ export default class Board {
     }
 
     newGame() {
-        document.querySelector(':root').style.setProperty('--display', 'none');
+        document.querySelector('.new-game-btn').replaceWith(document.querySelector('.new-game-btn').cloneNode(true));
         play();
     }
 
@@ -230,7 +274,7 @@ export default class Board {
             document.querySelector('.game-message').textContent = 'You win!';
             document.querySelector(':root').style.setProperty('--display', 'flex');
         } else {
-            console.log(this.clearedSquares.size, this.clearedSquares);
+            // console.log(this.clearedSquares.size, this.clearedSquares);
         }
     }
 }
