@@ -1,10 +1,14 @@
 import Board from "./board.js";
 
+let board = null;
+const btn = document.querySelector('.new-game-btn');
 
-export function play() {
-    let board = null;
+btn.addEventListener('click', play);
+function play() {
+    board = null;
     board = new Board(16, 40);
 }
+
 
 play();
 

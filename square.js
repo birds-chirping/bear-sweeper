@@ -34,9 +34,11 @@ export default class Square {
         if (this.n && this.e) this.ne = this.parent.squares[this.row-1][this.col+1];
         if (this.s && this.w) this.sw = this.parent.squares[this.row+1][this.col-1];
         if (this.s && this.e) this.se = this.parent.squares[this.row+1][this.col+1];
-        // console.log(this.id, this.n, this.s, this.w, this.e, this.nw, this.ne, this.sw, this.se);
     }
 
+    getAdjacentSquares() {
+        return [this.n, this.w, this.s, this.e, this.nw, this.ne, this.sw, this.se];
+    }
     
     // ------------------- M O U S E    E V E N T S --------------------//
     onClick() {
@@ -70,32 +72,43 @@ export default class Square {
             if (this.status === 'hidden'){
                 this.toggleFlagged();
             }
-
     }
 
-    // -------------------------------------------------------------------//
-
-
+    // ----------------------- F L A G S --------------------------------//
 
     toggleFlagged () {
-        if (this.flagged === 'no') {
-            this.div.removeEventListener('click', this.clickHandler);
-            this.flagged = 'yes';
-            this.div.classList.add('flagged');
-            this.parent.addFlaggedSquare(this);
-        } else {
-            this.onClick();
-            this.flagged = 'no';
-            this.div.classList.remove('flagged');
-            this.parent.removeFlaggedSquare(this);
+        if (this.flagged === 'no') this.flag();
+        else this.unflag(); 
+    }
+
+    flag() {
+        this.div.removeEventListener('click', this.clickHandler);
+        this.flagged = 'yes';
+        this.div.classList.add('flagged');
+        this.parent.addFlaggedSquare(this);
+    }
+
+    unflag() {
+        this.onClick();
+        this.flagged = 'no';
+        this.div.classList.remove('flagged');
+        this.parent.removeFlaggedSquare(this);
+    }
+
+    showWrongFlag() {
+        if (this.flagged === 'yes' && this.value !== 'bear') {
+            this.showSquare();
+            this.div.textContent = '';
+            this.div.style.backgroundImage = 'url(./img/bear-pawprint-wrong.png)';
         }
     }
 
+
+    // ------------------------------------------------------------------//
     showSquare() {
             this.status = 'visible';
             this.flagged = 'no';
             this.onClick();
-
             this.div.textContent = this.value;
             this.div.classList.add('visible-square');
             this.parent.addClearedSquare(this.id);
@@ -104,14 +117,6 @@ export default class Square {
     showBear() {
         if (this.flagged === 'no') {
             this.div.classList.add('show-bear');
-        }
-    }
-
-    showWrongFlag() {
-        if (this.flagged === 'yes' && this.value !== 'bear') {
-            this.showSquare();
-            this.div.textContent = '';
-            this.div.style.backgroundImage = 'url(./img/bear-pawprint-wrong.png)';
         }
     }
 

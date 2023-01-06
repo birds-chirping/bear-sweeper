@@ -1,5 +1,4 @@
 import Square from "./square.js";
-import { play } from "./app.js";
 
 // --------------------------------- B O A R D -------------------------------
 export default class Board {
@@ -21,7 +20,6 @@ export default class Board {
         this.addSquares(this.setBoardContainer());
         this.linkAdjacentSquares();
         this.addBears();
-        this.addNewGameBtn();
         this.updateFlagCounter();
     }
 
@@ -31,8 +29,8 @@ export default class Board {
          })
     }
 
-
     // ----------------- S E T    B O A R D ----------------------//
+
     setRootVariables() {
         document.querySelector(':root').style.setProperty('--display', 'none');
         document.querySelector(':root').style.setProperty('--grid-size', `${this.size}`);
@@ -44,7 +42,7 @@ export default class Board {
         return board;
     }
 
-    // ----------------- add squares and bears ----------------------//
+    // ----------------- add squares and bears ----------------------
 
     addSquares(boardContainer) {
         let id = 0;
@@ -55,14 +53,14 @@ export default class Board {
                 this.ids.push(id++);
                 squareRow.push(square);
                 boardContainer.appendChild(square.div);
-                console.log('A SQUARE');
             }
             this.squares.push(squareRow);
         } 
     }
 
 
-    // --------------- generate bears ----------------------------------------
+    // --------------- generate bears --------------------------------
+
     addBears() {
         this.placeBears(this.pickRandomIDs(this.ids));
         this.markAroundBearSquares();
@@ -77,11 +75,11 @@ export default class Board {
     }
 
     markAroundBearSquares() {
-        for(let i = 0; i < this.bearCount; i++) {
-            let row = this.bearSquares[i].row;
-            let col = this.bearSquares[i].col;
-            this.adjacentSquares(row, col, 'update');
-         }
+        this.bearSquares.forEach(bear => {
+            bear.getAdjacentSquares().forEach(square => {
+                if(square) square.updateValue();
+            });
+        });
     }
 
     //  ------------ helpers--------
@@ -108,55 +106,18 @@ export default class Board {
         return list;
     }
     
-
-    // ---------------------------------------------------------------------
-
-    adjacentSquares(row, col, action) {
-        let count = 0;
-        for (let r = row-1; r <= row+1; r++) {
-            for(let c = col-1; c <= col+1; c++) {
-                if (r < 0 || r > this.size - 1 || c < 0 || c > this.size - 1 || r == row && c == col) {
-                    // console.log('sq:', row, col, 'n:', r, c);
-                    continue;
-                } else {
-                    switch(true) {
-                        case (action ===  'update'):
-                            this.squares[r][c].updateValue();
-                            break;
-                        case (action === 'getflags'):
-                            count += (this.squares[r][c].flagged == 'yes');
-                            break;
-                        case (action === 'chord'):
-                            if (this.squares[r][c].status === 'hidden' && this.squares[r][c].flagged === 'no') {
-                                if (this.squares[r][c].value === 'bear') {
-                                    this.squares[r][c].div.style.backgroundColor = '#dfb1b3';
-                                    this.gameOver();
-                                } else if (this.squares[r][c].value == null) {
-                                    this.clearArea(this.squares[r][c]);
-                                } else {
-                                    this.squares[r][c].showSquare();
-                                }
-                            }
-                    }
-                }
-            }
-        }
-        return count;
-    }
+    // ------------------ F L O O D   F I L L ----------------//
 
     clearArea(square) {
-        // already visible:
         if (square.status !== 'hidden') {
             return;
         }
 
-        // Hidden numbers: 
         if (square.value) {
             square.showSquare();
             return;
         }
 
-        // Empty squares:
         square.showSquare();
 
         if (square.n) {
@@ -178,43 +139,54 @@ export default class Board {
     }
 
     checkCorners(square) {
-        if (square.nw && square.n.value && square.w.value) {
-            square.nw.value ? square.nw.showSquare() : this.clearArea(square.nw);
-        } 
-        if (square.ne && square.n.value && square.e.value) {
-            square.ne.value ? square.ne.showSquare() : this.clearArea(square.ne);
+        if (square.n && square.n.value) {
+            if (square.w && square.w.value) {
+                square.nw.value ? square.nw.showSquare() : this.clearArea(square.nw);
+            } 
+            if (square.e && square.e.value) {
+                square.ne.value ? square.ne.showSquare() : this.clearArea(square.ne);
+            }
         }
-        if (square.sw && square.s.value && square.w.value) {
-            square.sw.value ? square.sw.showSquare() : this.clearArea(square.sw);
-        }
-        if (square.se && square.s.value && square.e.value) {
-            square.se.value ? square.se.showSquare() : this.clearArea(square.se);
-        }
-    }
 
-    // ------------ N E W   G A M E / G A M E   O V E R -------//
-
-    addNewGameBtn() {
-        document.querySelector('.new-game-btn').addEventListener('click', this.newGame.bind(this));
-    }
-
-    newGame() {
-        document.querySelector('.new-game-btn').replaceWith(document.querySelector('.new-game-btn').cloneNode(true));
-        play();
-    }
-
-    gameOver() {
-        this.showAllBears();
-        this.showWrongFlags();
-        document.querySelector('.game-message').textContent = 'Game over';
-        document.querySelector(':root').style.setProperty('--display', 'flex');
-    }
-
-    showAllBears() {
-        for (let bear of this.bearSquares) {
-            bear.showBear();
+        if (square.s && square.s.value) {
+            if (square.w && square.w.value) {
+                square.sw.value ? square.sw.showSquare() : this.clearArea(square.sw);
+            }
+            if (square.e && square.e.value) {
+                square.se.value ? square.se.showSquare() : this.clearArea(square.se);
+            }
         }
     }
+
+
+    // -------------- C H O R D I N G ------------------------//
+
+    chord(square) {
+        if (this.getAdjacentFlags(square) == square.value) {
+            square.getAdjacentSquares().forEach(adjSquare => {
+                if (adjSquare && adjSquare.status === 'hidden' && adjSquare.flagged === 'no') {
+                    if (adjSquare.value === 'bear') {
+                        adjSquare.div.style.backgroundColor = '#dfb1b3';
+                        this.gameOver();
+                    } else if (adjSquare.value == null) {
+                        this.clearArea(adjSquare);
+                    } else {
+                        adjSquare.showSquare();
+                    }
+                }
+            });
+            return true;
+        }
+    }
+
+    getAdjacentFlags(square) {
+        let count = 0;
+        square.getAdjacentSquares().forEach(adjSquare => {
+            if (adjSquare) count += (adjSquare.flagged == 'yes');
+        });
+        return count;        
+    }
+
 
     // -------------------- F L A G S -----------------------//
 
@@ -248,18 +220,20 @@ export default class Board {
     updateFlagCounter() {
         document.querySelector('.paws').textContent = `Bears: ${this.bearCount - this.flaggedSquares.length}`;
     }
-    
-    // -------------- C H O R D I N G ------------------------//
 
-    chord(square) {
-        if (this.getAdjacentFlags(square) == square.value) {
-            this.adjacentSquares(square.row, square.col, 'chord');
-            return true;
-        }
+    // ------------------ G A M E   O V E R -----------------//
+
+    gameOver() {
+        this.showAllBears();
+        this.showWrongFlags();
+        document.querySelector('.game-message').textContent = 'Game over';
+        document.querySelector(':root').style.setProperty('--display', 'flex');
     }
 
-    getAdjacentFlags(square) {
-        return this.adjacentSquares(square.row, square.col, 'getflags');
+    showAllBears() {
+        for (let bear of this.bearSquares) {
+            bear.showBear();
+        }
     }
 
     // ----------------------- W I N -------------------------//
@@ -273,9 +247,7 @@ export default class Board {
         if (this.clearedSquares.size == this.size ** 2 - this.bearCount) {
             document.querySelector('.game-message').textContent = 'You win!';
             document.querySelector(':root').style.setProperty('--display', 'flex');
-        } else {
-            // console.log(this.clearedSquares.size, this.clearedSquares);
-        }
+        } 
     }
 }
 
