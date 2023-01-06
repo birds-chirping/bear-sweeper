@@ -244,6 +244,11 @@ footer {
         font-size: 4vmin;
     }
 
+    .footer-wrapper > * {
+        width: 100%;
+        text-align: center;
+    }
+
     .footer-wrapper :nth-child(2) {
         order: -1;
     }
