@@ -4,14 +4,19 @@
     --grid-width: calc(75vmin * var(--size));
     --display: none;
     --border-size: calc(0.67vmin * 16  * var(--size) / var(--grid-size));
-    --board-border-color: #000000ab;
-    --title-color: #226940;
+    --board-shadow-color: #000000ab;
     --title-color: #0b3f2bd9;
     --a-link-color: #b0c7b0;
     --a-hover-color: #b0c7b0;
     --font-size-num: calc(4.5vmin * 16 * var(--size) / var(--grid-size));
     --line-height-num: calc(2vmin * 16 * var(--size) / var(--grid-size));
-    --square-border: calc(0.5vmin * 16 * var(--size) / var(--grid-size));
+    --square-border: calc(0.35vmin * 16 * var(--size) / var(--grid-size));
+    --square-border-dark: #777777;
+    --square-border-light: #ececec;
+    /* --grid-color: #617468; */
+    --grid-color: hsla(142, 4%, 42%, 0.786);
+    /* --clicked-bear-color: #523552; */
+    --clicked-bear-color: #c2adc2;
 }
 
 @font-face {
@@ -68,7 +73,8 @@ body {
     font-size: 8vmin;
     color: var(--title-color);
     font-weight: 100;
-    margin: 1vmin 0;
+    /* margin: 1vmin 0; */
+    margin: 1vmin 0 0 0;
     text-align: center;
 }
 
@@ -83,10 +89,10 @@ main {
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
-    background-color: var(--board-border-color);
-    box-shadow: 0.2vmin 0.2vmin 0.5vmin var(--board-border-color);
-    border-bottom: calc(var(--square-border) / 2) solid #777777; 
-    border-right: calc(var(--square-border) / 2) solid #777777;
+    background-color: var(--grid-color);
+    box-shadow: 0.2vmin 0.2vmin 0.5vmin var(--board-shadow-color);
+    border-bottom: calc(var(--square-border) / 2) solid var(--grid-color); 
+    border-right: calc(var(--square-border) / 2) solid var(--grid-color);
 }
 
 .game-over-screen {
@@ -98,8 +104,13 @@ main {
     display: var(--display);   
 }
 
+.wrapper {
+    margin-top: 2vmin;
+}
+
 .menu-wrapper {
     width: calc(var(--grid-width));
+    /* height: 5vmin; */
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
@@ -111,22 +122,22 @@ main {
 .message {
     flex: 1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .message > h1 {
     display: var(--display);
-    font-size: 4vmin;
+    font-size: 4.5vmin;
     font-weight: 100;
-    padding-right: 5%;
 }
 
 .paws {
     flex: 1;
     display: flex;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: flex-end;
     font-size: 4vmin;
+    padding-right: 3%;
 }
 
 .btn-wrap {
@@ -151,10 +162,10 @@ button:hover {
 }
 
 .square {
-    border-top: var(--border-size) solid #ececec;
-    border-left: var(--border-size) solid #ececec;
-    border-bottom: var(--border-size) solid #777777;
-    border-right: var(--border-size) solid #777777;
+    border-top: var(--border-size) solid var(--square-border-light);
+    border-left: var(--border-size) solid var(--square-border-light);
+    border-bottom: var(--border-size) solid var(--square-border-dark);
+    border-right: var(--border-size) solid var(--square-border-dark);
     background-color: lightgray;
     display: flex;
     justify-content: center;
@@ -167,8 +178,8 @@ button:hover {
 }
 
 .square:hover {
-    background-color: rgb(221, 233, 232);
     background-color: rgb(207, 223, 220);
+    /* background-color: rgba(207, 223, 214, 0.836); */
     cursor: default;
 }
 
@@ -189,8 +200,15 @@ footer {
     padding: 0.5vmin 2vmin;
 }
 
+.git {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .github-icon {
-    max-height: 2.5vmin;
+    max-height: calc(2.6vmin * var(--size));
+    padding: 0 0.3vmin;
 }
 
 .flagged {
@@ -201,24 +219,24 @@ footer {
 }
 
 .show-bear {
-    background-color: #b0c7b0;
+    background-color: lightgray;
     background-image: url(./img/bear.png);
     background-position: center;
     background-size: 95%;
     background-repeat: no-repeat;
     border: none; 
-    border-top: var(--square-border) solid #777777; 
-    border-left: var(--square-border) solid #777777;
+    border-top: var(--square-border) solid var(--grid-color); 
+    border-left: var(--square-border) solid var(--grid-color);
 }
 
 .visible-square {
     background-image: none;
     border: none;
-    border-top: var(--square-border) solid #777777; 
-    border-left: var(--square-border) solid #777777;
+    border-top: var(--square-border) solid var(--grid-color); 
+    border-left: var(--square-border) solid var(--grid-color);
 }
 
-@media screen and (orientation: portrait) {
+@media screen and (max-aspect-ratio: 3/4) {
     :root {
         --size: 1.2;
     }
@@ -233,9 +251,12 @@ footer {
     }
 
     button, 
-    .paws,
-    .message > h1 {
+    .paws {
         font-size: 5.5vmin;
+    }
+
+    .message > h1 {
+        font-size: 6.5vmin;
     }
 
     .footer-wrapper {
@@ -249,7 +270,7 @@ footer {
         text-align: center;
     }
 
-    .footer-wrapper :nth-child(2) {
+    .git {
         order: -1;
     }
 }

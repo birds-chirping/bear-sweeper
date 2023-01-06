@@ -166,7 +166,7 @@ export default class Board {
             square.getAdjacentSquares().forEach(adjSquare => {
                 if (adjSquare && adjSquare.status === 'hidden' && adjSquare.flagged === 'no') {
                     if (adjSquare.value === 'bear') {
-                        adjSquare.div.style.backgroundColor = '#dfb1b3';
+                        adjSquare.div.style.backgroundColor = 'var(--clicked-bear-color)';
                         this.gameOver();
                     } else if (adjSquare.value == null) {
                         this.clearArea(adjSquare);
