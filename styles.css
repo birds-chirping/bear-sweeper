@@ -250,6 +250,10 @@ footer {
         font-size: 10vmin;
     }
 
+    .menu-wrapper {
+        height: 6.5vmin;
+    }
+
     button, 
     .paws {
         font-size: 5.5vmin;
