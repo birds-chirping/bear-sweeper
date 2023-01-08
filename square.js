@@ -18,13 +18,11 @@ export default class Square {
         this.rightClickedHandler = this.rightClicked.bind(this);
         this.touchStartEventHandler = this.touchStartEvent.bind(this);
         this.touchEndEventHandler = this.touchEndEvent.bind(this);
-        this.touchMoveEventHandler = this.touchMoveEvent.bind(this);
         this.onLongClickHandler = this.onLongClick.bind(this);
         this.addTouchEvent();
         this.addClickEvent();
         this.addRightClickEvent();
         this.touched = 'no';
-        this.moved = 'no'; 
         this.timeoutId;
 
     }
@@ -69,13 +67,6 @@ export default class Square {
     }
 
     clicked() {
-        // console.log('CLICK');
-        if (this.touched == 'yes') {
-            // this.touched = 'no';
-            this.removeClickEvent();
-            // return;
-        }
-
         if (this.status === 'visible') {
             if (this.parent.chord(this)) {
                 this.status = 'inactive'; //
@@ -104,15 +95,12 @@ export default class Square {
     addTouchEvent() {
         this.div.addEventListener('touchstart', this.touchStartEventHandler);
         this.div.addEventListener('touchend', this.touchEndEventHandler);        
-        this.div.addEventListener('touchmove', this.touchMoveEventHandler);
     }
 
     touchStartEvent() {
         this.touched = 'yes';
-        // this.removeClickEvent();
         this.timeoutId = setTimeout(this.onLongClickHandler, 200);
-        };
-
+    }
 
     onLongClick() {
         this.timeoutId = null;
@@ -125,35 +113,11 @@ export default class Square {
         }
     }
 
-
     touchEndEvent() {
-        if (this.timeoutId) {
-            // console.log('click');
+        if (this.timeoutId) {               // ON CLICK
             clearTimeout(this.timeoutId); 
-            if (this.moved != 'yes') {
-                this.removeClickEvent();
-                if (this.flagged === 'no') {
-                    this.clicked();
-                }
-            }
-            this.moved = 'no';
         } 
-        else {
-            // console.log('long');
-            // if (this.flagged == 'no' && this.status != 'visible') {
-            //     this.flag()
-            // } else {
-            //     this.unflag();
-            // } 
-        }
-    }
-
-    touchMoveEvent() {
-        if (this.timeoutId) {
-            clearTimeout(this.timeoutId);
-            this.moved = 'yes';
-        }
-
+        // else {}                          // ON LONG CLICK
     }
 
     // ----------------------- F L A G S --------------------------------//
@@ -192,7 +156,6 @@ export default class Square {
     showSquare() {
             if(!this.value) {
                 this.removeClickEvent();
-                this.removeRightClickEvent();
             }
             
             this.status = 'visible';
