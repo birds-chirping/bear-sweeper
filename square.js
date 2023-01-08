@@ -2,7 +2,8 @@
 
 
 export default class Square {
-    color_palette = ['blue', 'green', '#cc4545', 'purple', 'maroon', 'turquoise','black', 'gray']
+    color_palette = ['blue', 'green', '#cc4545', 'purple', 'maroon', 'turquoise','black', 'gray'];
+
     constructor(parent, id, row, col) {
         this.parent = parent;
         this.id = id;
@@ -12,11 +13,20 @@ export default class Square {
         this.div = document.createElement('div');
         this.status = 'hidden';
         this.flagged = 'no';
-        this.addAttributes();
-        this.clickHandler = this.clicked.bind(this);
-        this.rightClickHandler = this.rightClicked.bind(this);
-        this.onClick();
-        this.onRightClick();
+
+        this.clickedHandler = this.clicked.bind(this);
+        this.rightClickedHandler = this.rightClicked.bind(this);
+        this.touchStartEventHandler = this.touchStartEvent.bind(this);
+        this.touchEndEventHandler = this.touchEndEvent.bind(this);
+        this.touchMoveEventHandler = this.touchMoveEvent.bind(this);
+        this.onLongClickHandler = this.onLongClick.bind(this);
+        this.addTouchEvent();
+        this.addClickEvent();
+        this.addRightClickEvent();
+        this.touched = 'no';
+        this.moved = 'no'; 
+        this.timeoutId;
+
     }
 
     addAttributes() {
@@ -41,20 +51,36 @@ export default class Square {
     }
     
     // ------------------- M O U S E    E V E N T S --------------------//
-    onClick() {
-        this.div.addEventListener('click', this.clickHandler);
+    addClickEvent() {
+        this.div.addEventListener('click', this.clickedHandler);
     }
 
-    onRightClick() {
-        this.div.addEventListener('contextmenu', this.rightClickHandler);
+    removeClickEvent() {
+        this.div.removeEventListener('click', this.clickedHandler);
+        console.log('removed');
+    }
+
+    addRightClickEvent() {
+        this.div.addEventListener('contextmenu', this.rightClickedHandler);
+    }
+
+    removeRightClickEvent() {
+        this.div.removeEventListener('contextmenu', this.rightClickedHandler);
     }
 
     clicked() {
+        // console.log('CLICK');
+        if (this.touched == 'yes') {
+            // this.touched = 'no';
+            this.removeClickEvent();
+            // return;
+        }
+
         if (this.status === 'visible') {
             if (this.parent.chord(this)) {
-                this.status = 'inactive';
-                this.div.setAttribute('inactive', 'yes');
-                this.div.removeEventListener('click', this.clickHandler);
+                this.status = 'inactive'; //
+                this.div.setAttribute('inactive', 'yes'); //
+                this.removeClickEvent();
             }
         } else if (this.value === 'bear') {
             this.parent.gameOver();
@@ -68,10 +94,64 @@ export default class Square {
     }
 
     rightClicked(evt) {
-            evt.preventDefault();
-            if (this.status === 'hidden'){
-                this.toggleFlagged();
+        evt.preventDefault();
+        if (this.status === 'hidden' && this.touched == 'no'){
+            this.toggleFlagged();
+        }
+    }
+
+    // -------------- Long press (touch) --------------
+    addTouchEvent() {
+        this.div.addEventListener('touchstart', this.touchStartEventHandler);
+        this.div.addEventListener('touchend', this.touchEndEventHandler);        
+        this.div.addEventListener('touchmove', this.touchMoveEventHandler);
+    }
+
+    touchStartEvent() {
+        this.touched = 'yes';
+        // this.removeClickEvent();
+        this.timeoutId = setTimeout(this.onLongClickHandler, 200);
+        };
+
+
+    onLongClick() {
+        this.timeoutId = null;
+        if (this.flagged == 'no' && this.status != 'visible') {
+            this.flag()
+        } else {
+            this.unflag();
+        } 
+    }
+
+
+    touchEndEvent() {
+        if (this.timeoutId) {
+            // console.log('click');
+            clearTimeout(this.timeoutId); 
+            if (this.moved != 'yes') {
+                this.removeClickEvent();
+                if (this.flagged === 'no') {
+                    this.clicked();
+                }
             }
+            this.moved = 'no';
+        } 
+        else {
+            // console.log('long');
+            // if (this.flagged == 'no' && this.status != 'visible') {
+            //     this.flag()
+            // } else {
+            //     this.unflag();
+            // } 
+        }
+    }
+
+    touchMoveEvent() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+            this.moved = 'yes';
+        }
+
     }
 
     // ----------------------- F L A G S --------------------------------//
@@ -82,14 +162,16 @@ export default class Square {
     }
 
     flag() {
-        this.div.removeEventListener('click', this.clickHandler);
+        this.removeClickEvent();
         this.flagged = 'yes';
         this.div.classList.add('flagged');
         this.parent.addFlaggedSquare(this);
     }
 
     unflag() {
-        this.onClick();
+        if (this.touched == 'no') {
+            this.addClickEvent();
+        }
         this.flagged = 'no';
         this.div.classList.remove('flagged');
         this.parent.removeFlaggedSquare(this);
@@ -106,9 +188,13 @@ export default class Square {
 
     // ------------------------------------------------------------------//
     showSquare() {
+            if(!this.value) {
+                this.removeClickEvent();
+                this.removeRightClickEvent();
+            }
+
             this.status = 'visible';
             this.flagged = 'no';
-            this.onClick();
             this.div.textContent = this.value;
             this.div.classList.add('visible-square');
             this.parent.addClearedSquare(this.id);
@@ -121,7 +207,7 @@ export default class Square {
     }
 
     placeBear() {
-        this.div.setAttribute('data-value', 'bear');
+        this.div.setAttribute('data-value', 'bear'); //
         this.value = 'bear';
     }
 
@@ -132,4 +218,36 @@ export default class Square {
         }
     }
 }
+
+
+// -------------- DOUBLE TAP
+// one = 'no';
+
+// // constructor:
+// this.touchHandler = this.touch.bind(this);
+// this.onTouch(); 
+// this.lastClick;
+
+// // methods:
+// onTouch() {
+//     this.div.addEventListener('touchstart', this.touchHandler)
+// }
+
+// touch(evt) {
+//     evt.preventDefault();
+//     if (this.one == 'first') {
+//         this.one = 'second';
+//         if (this.status === 'hidden'){
+//             this.toggleFlagged();
+//         }
+//         return;
+//     }
+//     this.one = 'first';
+//     setTimeout(() => {
+//         if (this.one == 'first'  && this.flagged == 'no') { 
+//             this.clicked();
+//         }
+//         this.one = 'none'; 
+//     }, 500);
+// }
 

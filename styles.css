@@ -93,6 +93,10 @@ main {
     box-shadow: 0.2vmin 0.2vmin 0.5vmin var(--board-shadow-color);
     border-bottom: calc(var(--square-border) / 2) solid var(--grid-color); 
     border-right: calc(var(--square-border) / 2) solid var(--grid-color);
+
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 .game-over-screen {
@@ -234,6 +238,12 @@ footer {
     border: none;
     border-top: var(--square-border) solid var(--grid-color); 
     border-left: var(--square-border) solid var(--grid-color);
+}
+
+.touch {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
 @media screen and (max-aspect-ratio: 3/4) {

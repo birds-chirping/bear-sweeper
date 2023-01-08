@@ -12,12 +12,13 @@ export default class Board {
     constructor(size=16, bearCount=40) {
         this.size = size;
         this.bearCount = bearCount;
-        this.createGrid();
+        // this.touch = document.body.getAttribute('input-type');
     }
 
     createGrid() {
         this.setRootVariables();
-        this.addSquares(this.setBoardContainer());
+        let cont = this.setBoardContainer();
+        this.addSquares(cont);
         this.linkAdjacentSquares();
         this.addBears();
         this.updateFlagCounter();
@@ -30,7 +31,7 @@ export default class Board {
     }
 
     // ----------------- S E T    B O A R D ----------------------//
-
+    
     setRootVariables() {
         document.querySelector(':root').style.setProperty('--display', 'none');
         document.querySelector(':root').style.setProperty('--grid-size', `${this.size}`);
@@ -50,6 +51,7 @@ export default class Board {
             let squareRow = [];
             for (let col = 0; col < this.size; col++) {
                 let square = new Square(this, id, row, col);
+                square.addAttributes();
                 this.ids.push(id++);
                 squareRow.push(square);
                 boardContainer.appendChild(square.div);

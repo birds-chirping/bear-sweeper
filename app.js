@@ -3,10 +3,21 @@ import Board from "./board.js";
 let board = null;
 const btn = document.querySelector('.new-game-btn');
 
+
+// window.addEventListener('touchstart', setInputType);
+
+// function setInputType() {
+//     document.body.setAttribute('input-type', 'touch');
+//     window.removeEventListener('touchstart', setInputType);
+// }
+
+
 btn.addEventListener('click', play);
+
 function play() {
-    board = null;
+    board = undefined;
     board = new Board(16, 40);
+    board.createGrid();
 }
 
 
