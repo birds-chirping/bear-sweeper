@@ -116,11 +116,13 @@ export default class Square {
 
     onLongClick() {
         this.timeoutId = null;
-        if (this.flagged == 'no' && this.status != 'visible') {
-            this.flag()
-        } else {
-            this.unflag();
-        } 
+        if (this.status == 'hidden'){
+            if (this.flagged == 'no') {
+                this.flag()
+            } else {
+                this.unflag();
+            }
+        }
     }
 
 
@@ -192,7 +194,7 @@ export default class Square {
                 this.removeClickEvent();
                 this.removeRightClickEvent();
             }
-
+            
             this.status = 'visible';
             this.flagged = 'no';
             this.div.textContent = this.value;
