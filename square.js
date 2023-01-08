@@ -31,6 +31,7 @@ export default class Square {
 
     addAttributes() {
         this.div.setAttribute('class','square');
+        this.div.setAttribute('tabindex','-1');
         this.div.setAttribute('id', `${this.id}`);
     }
     
@@ -57,7 +58,6 @@ export default class Square {
 
     removeClickEvent() {
         this.div.removeEventListener('click', this.clickedHandler);
-        console.log('removed');
     }
 
     addRightClickEvent() {
@@ -220,36 +220,3 @@ export default class Square {
         }
     }
 }
-
-
-// -------------- DOUBLE TAP
-// one = 'no';
-
-// // constructor:
-// this.touchHandler = this.touch.bind(this);
-// this.onTouch(); 
-// this.lastClick;
-
-// // methods:
-// onTouch() {
-//     this.div.addEventListener('touchstart', this.touchHandler)
-// }
-
-// touch(evt) {
-//     evt.preventDefault();
-//     if (this.one == 'first') {
-//         this.one = 'second';
-//         if (this.status === 'hidden'){
-//             this.toggleFlagged();
-//         }
-//         return;
-//     }
-//     this.one = 'first';
-//     setTimeout(() => {
-//         if (this.one == 'first'  && this.flagged == 'no') { 
-//             this.clicked();
-//         }
-//         this.one = 'none'; 
-//     }, 500);
-// }
-

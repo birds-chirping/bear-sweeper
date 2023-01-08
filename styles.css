@@ -50,6 +50,10 @@ html {
     padding: 0;
 }
 
+.square:focus {
+    outline: transparent;
+}
+
 a:link, a:visited {
     color: var(--a-link-color);
     text-decoration: none;
