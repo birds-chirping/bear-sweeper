@@ -105,17 +105,16 @@ export default class Square {
     onLongClick() {
         this.timeoutId = null;
         if (this.status == 'hidden'){
-            if (this.flagged == 'no') {
-                this.flag()
-            } else {
-                this.unflag();
-            }
+            this.toggleFlagged();
         }
     }
 
     touchEndEvent() {
         if (this.timeoutId) {               // ON CLICK
             clearTimeout(this.timeoutId); 
+            if (this.flagged === 'no') {
+                this.clicked();
+            }
         } 
         // else {}                          // ON LONG CLICK
     }
