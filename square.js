@@ -2,7 +2,7 @@
 
 
 export default class Square {
-    color_palette = ['blue', 'green', '#cc4545', 'purple', 'maroon', 'turquoise','black', 'gray'];
+    color_palette = ['transparent','blue', 'green', '#cc4545', 'purple', 'maroon', 'turquoise','black', 'gray'];
 
     constructor(parent, id, row, col) {
         this.parent = parent;
@@ -176,10 +176,10 @@ export default class Square {
         this.value = 'bear';
     }
 
-    updateValue() {
+    updateValue(val) {
         if (this.value != 'bear') {
-            ++this.value;
-            this.div.style.setProperty('color', this.color_palette[this.value-1]);
+            this.value = this.value + val;
+            this.div.style.setProperty('color', this.color_palette[this.value]);
         }
     }
 }

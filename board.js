@@ -3,25 +3,28 @@ import Square from "./square.js";
 // --------------------------------- B O A R D -------------------------------
 export default class Board {
 
-    squares = [];
-    ids = [];
-    bearSquares = [];
-    flaggedSquares = []
-    clearedSquares = new Set();
-    
     constructor(size=16, bearCount=40) {
         this.size = size;
         this.bearCount = bearCount;
-        // this.touch = document.body.getAttribute('input-type');
+        this.squares = [];
+        this.ids = [];
+        this.extraBear;
+        this.bearSquares = [];
+        this.flaggedSquares = []
+        this.clearedSquares = new Set();
+        this.firstClickHandler = this.onFirstClick.bind(this);
+        this.board = document.querySelector('.board-wrapper');
+
     }
 
     createGrid() {
         this.setRootVariables();
-        let cont = this.setBoardContainer();
-        this.addSquares(cont);
+        this.board.textContent = '';
+        this.addSquares(this.board);
         this.linkAdjacentSquares();
         this.addBears();
         this.updateFlagCounter();
+        this.firstClickEvent();
     }
 
     linkAdjacentSquares() {
@@ -35,12 +38,6 @@ export default class Board {
     setRootVariables() {
         document.querySelector(':root').style.setProperty('--display', 'none');
         document.querySelector(':root').style.setProperty('--grid-size', `${this.size}`);
-    }
-
-    setBoardContainer() {
-        let board = document.querySelector('.board-wrapper');
-        board.textContent = '';
-        return board;
     }
 
     // ----------------- add squares and bears ----------------------
@@ -64,23 +61,25 @@ export default class Board {
     // --------------- generate bears --------------------------------
 
     addBears() {
-        this.placeBears(this.pickRandomIDs(this.ids));
-        this.markAroundBearSquares();
-    }
-    
-    placeBears(randomIDsList) {
+        let randomIDsList = this.pickRandomIDs(this.ids);
+
         for (let i = 0; i < this.bearCount; i++) {
             let square = this.idToSquare(randomIDsList[i]);
-            square.placeBear();
-            this.bearSquares.push(square);
+            this.addBear(square);
         }
-    }
-
-    markAroundBearSquares() {
         this.bearSquares.forEach(bear => {
-            bear.getAdjacentSquares().forEach(square => {
-                if(square) square.updateValue();
-            });
+            this.markAroundBearSquare(bear);
+        });
+    }
+    
+    addBear(square) {
+        square.placeBear();
+        this.bearSquares.push(square);
+    }
+    
+    markAroundBearSquare(bear, v=1) {
+        bear.getAdjacentSquares().forEach(square => {
+            if(square) square.updateValue(v);
         });
     }
 
@@ -88,7 +87,9 @@ export default class Board {
 
     pickRandomIDs(ids) {
         let idlist = ids.map((x) => x);
-        return this.shuffle(idlist).splice(1, this.bearCount);
+        let randomBears = this.shuffle(idlist);
+        this.extraBear = this.idToSquare(randomBears[this.bearCount]);
+        return randomBears.splice(0, this.bearCount);
     }
 
     idToSquare(id) {
@@ -108,6 +109,42 @@ export default class Board {
         return list;
     }
     
+    // ------------------ F I R S T   C L I C K -> S A F E -----------//
+
+    firstClickEvent() {
+        this.board.addEventListener('click', this.firstClickHandler, true);
+    }
+
+    onFirstClick(e) {
+        let square = this.idToSquare(e.target.getAttribute('id'))
+        if (square.value == 'bear') {
+            this.removeFirstBear(square);
+            this.addExtraBear();
+        }
+        this.board.removeEventListener('click', this.firstClickHandler, true);
+    }
+
+    removeFirstBear(square) {
+        // set new square value & color
+        square.value = null;      
+        square.getAdjacentSquares().forEach(adjSquare => {
+            if (adjSquare) {
+                if (adjSquare.value == 'bear') {
+                    square.value++;
+                }
+            }
+        });
+        square.div.style.setProperty('color', square.color_palette[square.value]);
+
+        this.bearSquares.splice(this.bearSquares.indexOf(square), 1);   // del from list of bears
+        this.markAroundBearSquare(square, -1);    // update adjacent values
+    }
+
+    addExtraBear() {
+        this.addBear(this.extraBear);
+        this.markAroundBearSquare(this.extraBear);
+    }
+
     // ------------------ F L O O D   F I L L ----------------//
 
     clearArea(square) {
