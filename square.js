@@ -113,6 +113,7 @@ export default class Square {
         if (this.timeoutId) {               // ON CLICK
             clearTimeout(this.timeoutId); 
             if (this.flagged === 'no') {
+                this.removeClickEvent();
                 this.clicked();
             }
         } 
