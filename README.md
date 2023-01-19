@@ -1,7 +1,7 @@
 # <a href="https://birds-chirping.github.io/bear-sweeper/">Live preview</a>
 
 ## Personal challenge: 
-Recreate Minesweeper, using Javascript(OOP), HTML, CSS.
+Recreate Minesweeper, using JavaScript(OOP), HTML, CSS.
 
 ## Features:
   - First click is always safe
